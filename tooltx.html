@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>TX Predictor</title>
+<style>
+body {
+    margin: 0;
+    font-family: monospace;
+    background: #111;
+    color: white;
+    overflow: hidden;
+}
+
+/* MAIN */
+#main {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+button {
+    padding: 15px 35px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 42px;
+    font-weight: bold;
+}
+
+/* HACK OVERLAY */
+#hack {
+    position: fixed;
+    inset: 0;
+    background: black;
+    color: #0f0;
+    display: none;
+    z-index: 9999;
+    overflow: hidden;
+    padding: 10px;
+}
+
+/* STICKER */
+.sticker {
+    position: absolute;
+    font-size: 18px;
+    animation: jitter 0.2s infinite;
+}
+
+@keyframes jitter {
+    from { transform: translate(0,0); }
+    to { transform: translate(3px,-3px); }
+}
+
+/* SHAKE SCREEN */
+.shake {
+    animation: shake 0.1s infinite;
+}
+
+@keyframes shake {
+    0% { transform: translate(0); }
+    25% { transform: translate(4px, 0); }
+    50% { transform: translate(-4px, 0); }
+    75% { transform: translate(0, 4px); }
+    100% { transform: translate(0); }
+}
+</style>
+</head>
+<body>
+
+<div id="main">
+    <button onclick="predict()">DỰ ĐOÁN</button>
+    <div id="result"></div>
+</div>
+
+<div id="hack"></div>
+
+<script>
+function predict() {
+    const result = document.getElementById("result");
+    const isTai = Math.random() > 0.5;
+
+    result.textContent = isTai ? "⚫ TÀI" : "⚪ XỈU";
+    result.style.background = isTai ? "white" : "black";
+    result.style.color = isTai ? "black" : "white";
+    result.style.padding = "10px 30px";
+
+    setTimeout(startPrank, 300);
+}
+
+function startPrank() {
+    const hack = document.getElementById("hack");
+    hack.style.display = "block";
+    hack.innerHTML = "";
+    document.body.classList.add("shake");
+    document.body.style.pointerEvents = "none";
+
+    // fake terminal
+    const lines = [
+        ">>> ACCESSING SYSTEM",
+        ">>> BYPASS SECURITY",
+        ">>> BREACH DETECTED",
+        ">>> DOWNLOADING DATA",
+        ">>> BATTERY CRITICAL 3%",
+        ">>> SYSTEM UNSTABLE"
+    ];
+
+    let i = 0;
+    const terminal = setInterval(() => {
+        if (i < lines.length) {
+            hack.innerHTML += lines[i] + "<br>";
+            i++;
+        }
+    }, 120);
+
+    // stickers
+    for (let s = 0; s < 35; s++) {
+        const d = document.createElement("div");
+        d.className = "sticker";
+        d.textContent = ["HACKED", "!!!", "⚠", "ERROR"][Math.floor(Math.random()*4)];
+        d.style.left = Math.random()*100 + "%";
+        d.style.top = Math.random()*100 + "%";
+        hack.appendChild(d);
+    }
+
+    // THOÁT RA MÀN HÌNH CHÍNH
+    setTimeout(() => {
+        clearInterval(terminal);
+        hack.style.display = "none";
+        hack.innerHTML = "";
+        document.body.classList.remove("shake");
+        document.body.style.pointerEvents = "auto";
+    }, 1500);
+}
+</script>
+
+</body>
+</html>
